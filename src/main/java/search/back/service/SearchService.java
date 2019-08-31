@@ -30,24 +30,29 @@ public class SearchService {
                 .setContent(searchDomain.getConternt())
                 .setUser(searchDomain.getUser())
                 .setCreateDate(new Date().getTime());
-        if (duplicateValidation(search)){
-            if (!search.getContent().equals("")){
+        if (!search.getContent().equals("")){
+
+            if (duplicateValidation(search)){
                 searchRepository.save(search);
+
+            } else {
+                Optional<User> dbUser = userService.getOne(searchDomain.getUser().getId());
+                dbUser.ifPresent(user -> {
+                    search.setUser(user);
+                    if (contentValidation(search, user))
+                        searchRepository.save(search);
+                });
             }
-        } else {
-            Optional<User> dbUser = userService.getOne(searchDomain.getUser().getId());
-            dbUser.ifPresent(user -> {
-                search.setUser(user);
-                if (contentValidation(search, user))
-                    searchRepository.save(search);
-            });
+
+
         }
+
     }
 
     private boolean contentValidation(Search search, User user){
         List<Search> searches = searchRepository.findByUser(user);
         for (Search dbSearch : searches) {
-            if (search.getContent().equals(dbSearch.getContent()) && search.getContent().equals("")){
+            if (search.getContent().equals(dbSearch.getContent())){
                 return false;
             }
         }
