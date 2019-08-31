@@ -8,6 +8,7 @@ public class Search {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    private long createDate;
     private String content;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -37,6 +38,15 @@ public class Search {
 
     public Search setUser(User user) {
         this.user = user;
+        return this;
+    }
+
+    public long getCreateDate() {
+        return createDate;
+    }
+
+    public Search setCreateDate(long createDate) {
+        this.createDate = createDate;
         return this;
     }
 }

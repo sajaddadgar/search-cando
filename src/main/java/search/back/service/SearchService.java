@@ -4,6 +4,7 @@ import com.mysql.cj.exceptions.WrongArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import search.back.domain.SearchDomain;
 import search.back.domain.SearchPageDomain;
@@ -11,6 +12,7 @@ import search.back.model.Search;
 import search.back.model.User;
 import search.back.repository.SearchRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,9 +26,14 @@ public class SearchService {
     private UserService userService;
 
     public void add(SearchDomain searchDomain){
-        Search search = new Search().setContent(searchDomain.getConternt()).setUser(searchDomain.getUser());
+        Search search = new Search()
+                .setContent(searchDomain.getConternt())
+                .setUser(searchDomain.getUser())
+                .setCreateDate(new Date().getTime());
         if (duplicateValidation(search)){
-            searchRepository.save(search);
+            if (!search.getContent().equals("")){
+                searchRepository.save(search);
+            }
         } else {
             Optional<User> dbUser = userService.getOne(searchDomain.getUser().getId());
             dbUser.ifPresent(user -> {
@@ -40,7 +47,7 @@ public class SearchService {
     private boolean contentValidation(Search search, User user){
         List<Search> searches = searchRepository.findByUser(user);
         for (Search dbSearch : searches) {
-            if (search.getContent().equals(dbSearch.getContent())){
+            if (search.getContent().equals(dbSearch.getContent()) && search.getContent().equals("")){
                 return false;
             }
         }
@@ -70,7 +77,7 @@ public class SearchService {
         Page<Search> page;
         int pageNum = searchPageDomain.getPage();
         int count = searchPageDomain.getCount();
-        page = searchRepository.findByUser(user, PageRequest.of(pageNum, count));
+        page = searchRepository.findByUser(user, PageRequest.of(pageNum, count, Sort.by("createDate").descending()));
         return page;
     }
 
