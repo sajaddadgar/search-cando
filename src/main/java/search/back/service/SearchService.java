@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import search.back.domain.SearchDomain;
-import search.back.domain.SearchPageDomain;
 import search.back.model.Search;
 import search.back.model.User;
 import search.back.repository.SearchRepository;
@@ -26,6 +25,7 @@ public class SearchService {
     private UserService userService;
 
     public void add(SearchDomain searchDomain){
+        System.out.println("search server: " + searchDomain.getConternt());
         Search search = new Search()
                 .setContent(searchDomain.getConternt())
                 .setUser(searchDomain.getUser())
