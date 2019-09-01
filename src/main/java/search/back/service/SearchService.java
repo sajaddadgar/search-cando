@@ -43,10 +43,7 @@ public class SearchService {
                         searchRepository.save(search);
                 });
             }
-
-
         }
-
     }
 
     private boolean contentValidation(Search search, User user){
@@ -77,12 +74,10 @@ public class SearchService {
         return searchRepository.findById(id);
     }
 
-    public Page<Search> getSearchPage(SearchPageDomain searchPageDomain, long id){
+    public Page<Search> getSearchPage(long id){
         User user = userService.getOne(id).orElseThrow(WrongArgumentException::new);
         Page<Search> page;
-        int pageNum = searchPageDomain.getPage();
-        int count = searchPageDomain.getCount();
-        page = searchRepository.findByUser(user, PageRequest.of(pageNum, count, Sort.by("createDate").descending()));
+        page = searchRepository.findByUser(user, PageRequest.of(0, 5, Sort.by("createDate").descending()));
         return page;
     }
 
