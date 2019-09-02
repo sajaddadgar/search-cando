@@ -24,7 +24,6 @@ public class SearchService {
     @Autowired
     private UserService userService;
 
-
     public void add(SearchDomain searchUserDomain){
         User user2 = userService.getUserByEmail(searchUserDomain.getEmail());
 
@@ -32,8 +31,6 @@ public class SearchService {
                 .setContent(searchUserDomain.getContent())
                 .setUser(user2)
                 .setCreateDate(new Date().getTime());
-
-
 
         if (!search.getContent().equals("")){
 

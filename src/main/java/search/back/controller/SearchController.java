@@ -18,11 +18,6 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    /*@PostMapping("/add")
-    public void add(@RequestBody SearchDomain searchDomain){
-        searchService.add(searchDomain);
-    }*/
-
     @PostMapping("/add")
     public void add(@RequestBody SearchDomain searchUserDomain){
         searchService.add(searchUserDomain);
