@@ -2,13 +2,15 @@ package search.back.domain;
 
 public class SearchDomain {
 
+    private long id;
     private String email;
     private String content;
 
     public SearchDomain() {
     }
 
-    public SearchDomain(String email, String search) {
+    public SearchDomain(long id, String email, String search) {
+        this.id = id;
         this.email = email;
         this.content = search;
     }
@@ -18,16 +20,26 @@ public class SearchDomain {
         return email;
     }
 
-    public void setEmail(String email) {
+    public SearchDomain setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     public String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public SearchDomain setContent(String content) {
         this.content = content;
+        return this;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public SearchDomain setId(long id) {
+        this.id = id;
+        return this;
+    }
 }

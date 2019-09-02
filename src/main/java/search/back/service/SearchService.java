@@ -24,32 +24,39 @@ public class SearchService {
     @Autowired
     private UserService userService;
 
-    public void add(SearchDomain searchUserDomain){
-        User user2 = userService.getUserByEmail(searchUserDomain.getEmail());
-
+    private void checkValidation(SearchDomain searchDomain, User user){
         Search search = new Search()
-                .setContent(searchUserDomain.getContent())
-                .setUser(user2)
+                .setContent(searchDomain.getContent())
+                .setUser(user)
                 .setCreateDate(new Date().getTime());
-
         if (!search.getContent().equals("")){
 
             if (duplicateValidation(search)){
                 searchRepository.save(search);
 
             } else {
-                Optional<User> dbUser = userService.getOne(user2.getId());
-                dbUser.ifPresent(user -> {
-                    search.setUser(user);
-                    if (contentValidation(search, user))
+                Optional<User> dbUser = userService.getOne(user.getId());
+                dbUser.ifPresent(user2 -> {
+                    search.setUser(user2);
+                    if (contentValidation(search, user2))
                         searchRepository.save(search);
                 });
             }
         }
     }
 
+    public void add(SearchDomain searchUserDomain){
 
+        if (userService.getUserByEmail(searchUserDomain.getEmail()) != null){
+            User user2 = userService.getUserByEmail(searchUserDomain.getEmail());
+            checkValidation(searchUserDomain, user2);
 
+        } else {
+            User user1 = new User(searchUserDomain.getId(), searchUserDomain.getEmail());
+            checkValidation(searchUserDomain, user1);
+        }
+
+    }
 
     private boolean contentValidation(Search search, User user){
         List<Search> searches = searchRepository.findByUser(user);
