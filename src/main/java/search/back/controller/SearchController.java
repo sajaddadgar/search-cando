@@ -23,9 +23,9 @@ public class SearchController {
         searchService.add(searchUserDomain);
     }
 
-    @PostMapping("/page/{id}")
-    public SearchPageDomain getSearchPage(@PathVariable long id){
-        Page<Search> domain = searchService.getSearchPage(id);
+    @PostMapping("/page/{email}")
+    public SearchPageDomain getSearchPage(@PathVariable String email){
+        Page<Search> domain = searchService.getSearchPage(email);
         Page<SearchInfoDomain> map = domain.map(SearchInfoDomain::new);
         return new SearchPageDomain(map.get().collect(Collectors.toList()), map.getTotalElements(), map.getTotalPages());
     }

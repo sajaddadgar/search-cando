@@ -79,10 +79,8 @@ public class SearchService {
         return searchRepository.findById(id);
     }
 
-    public Page<Search> getSearchPage(long id){
-        System.out.println(id);
-        User user = userService.getOne(id).orElseThrow(WrongArgumentException::new);
-        System.out.println(user.getEmail());
+    public Page<Search> getSearchPage(String email){
+        User user = userService.getUserByEmail(email);
         Page<Search> page;
         page = searchRepository.findByUser(user, PageRequest.of(0, 5, Sort.by("createDate").descending()));
         return page;
