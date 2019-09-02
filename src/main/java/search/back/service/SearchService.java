@@ -1,6 +1,5 @@
 package search.back.service;
 
-import com.mysql.cj.exceptions.WrongArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,16 +23,24 @@ public class SearchService {
     @Autowired
     private UserService userService;
 
+    public void add(SearchDomain searchUserDomain){
+        if (userService.getUserByEmail(searchUserDomain.getEmail()) != null){
+            User user2 = userService.getUserByEmail(searchUserDomain.getEmail());
+            checkValidation(searchUserDomain, user2);
+        } else {
+            User user1 = new User(searchUserDomain.getId(), searchUserDomain.getEmail());
+            checkValidation(searchUserDomain, user1);
+        }
+    }
+
     private void checkValidation(SearchDomain searchDomain, User user){
         Search search = new Search()
                 .setContent(searchDomain.getContent())
                 .setUser(user)
                 .setCreateDate(new Date().getTime());
         if (!search.getContent().equals("")){
-
             if (duplicateValidation(search)){
                 searchRepository.save(search);
-
             } else {
                 Optional<User> dbUser = userService.getOne(user.getId());
                 dbUser.ifPresent(user2 -> {
@@ -43,19 +50,6 @@ public class SearchService {
                 });
             }
         }
-    }
-
-    public void add(SearchDomain searchUserDomain){
-
-        if (userService.getUserByEmail(searchUserDomain.getEmail()) != null){
-            User user2 = userService.getUserByEmail(searchUserDomain.getEmail());
-            checkValidation(searchUserDomain, user2);
-
-        } else {
-            User user1 = new User(searchUserDomain.getId(), searchUserDomain.getEmail());
-            checkValidation(searchUserDomain, user1);
-        }
-
     }
 
     private boolean contentValidation(Search search, User user){
@@ -80,10 +74,6 @@ public class SearchService {
 
     public List<Search> getAll(){
         return (List<Search>) searchRepository.findAll();
-    }
-
-    public Optional<Search> getOne(long id){
-        return searchRepository.findById(id);
     }
 
     public Page<Search> getSearchPage(String email){
