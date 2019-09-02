@@ -80,6 +80,7 @@ public class SearchService {
     }
 
     public Page<Search> getSearchPage(long id){
+        System.out.println(id);
         User user = userService.getOne(id).orElseThrow(WrongArgumentException::new);
         System.out.println(user.getEmail());
         Page<Search> page;
